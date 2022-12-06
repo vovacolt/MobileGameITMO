@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17726815, g: 0.22192046, b: 0.3041623, a: 1}
+  m_IndirectSpecularColor: {r: 0.17726853, g: 0.22192088, b: 0.30416295, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -722,6 +722,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterSelectState
       objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623673, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: AvatarConfiguration.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623673, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: AvatarConfiguration.Array.data[8]
+      value: 
+      objectReference: {fileID: 11400000, guid: 2de5f5a2099e1ed45af5d15bdeaadf18, type: 2}
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: m_ClassInfoBox
       value: 
@@ -737,6 +745,10 @@ PrefabInstance:
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: _autoInjected.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_PlayerSeats.Array.size
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: m_CharacterGraphicsParent
@@ -779,6 +791,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1334998397}
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_PlayerSeats.Array.data[8]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: autoInjectGameObjects.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -815,9 +831,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 219125660}
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.data[8].Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.data[8].Color.b
+      value: 0.14214477
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.data[8].Color.g
+      value: 0.031372547
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.data[8].Color.r
+      value: 0.9882353
+      objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: m_GameObjectsThatWillBeInjectedAutomatically.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      propertyPath: m_IdentifiersForEachPlayerNumber.Array.data[8].Indicator
+      value: 
+      objectReference: {fileID: 21300000, guid: 5e0531f7cad04b346bf05685f3b9a846, type: 3}
     - target: {fileID: 3565665953789623674, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       propertyPath: m_GameObjectsThatWillBeInjectedAutomatically.Array.data[0]
       value: 
@@ -933,6 +973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -1119,6 +1160,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4148434299653504325, guid: 463d19e34c787654c8cb7332fc58149b, type: 3}
+      propertyPath: m_CharacterClass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4148434299776943716, guid: 463d19e34c787654c8cb7332fc58149b, type: 3}
+      propertyPath: m_CharacterClass
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4148434299944180662, guid: 463d19e34c787654c8cb7332fc58149b, type: 3}
+      propertyPath: m_CharacterClass
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4921811456745109879, guid: 463d19e34c787654c8cb7332fc58149b, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0

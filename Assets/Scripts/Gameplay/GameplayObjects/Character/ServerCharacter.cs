@@ -8,6 +8,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using static Unity.BossRoom.Gameplay.UserInput.ClientInputSender;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
@@ -93,6 +94,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
         /// </summary>
         public bool CanPerformActions => LifeState == LifeState.Alive;
+        //public bool CanPerformActions => LifeState == LifeState.Alive || LifeState == LifeState.Fainted;
 
         /// <summary>
         /// Character Type. This value is populated during character selection.
@@ -158,9 +160,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 m_DamageReceiver.DamageReceived += ReceiveHP;
                 m_DamageReceiver.CollisionEntered += CollisionEntered;
 
-                if (IsNpc)
+                if (IsNpc /*&& CharacterType != CharacterTypeEnum.Gnome*/)
                 {
-                    m_AIBrain = new AIBrain(this, m_ServerActionPlayer);
+                        m_AIBrain = new AIBrain(this, m_ServerActionPlayer);
+
                 }
 
                 if (m_StartingAction != null)
@@ -191,7 +194,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [ServerRpc]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            //здесь движение
+            if ((LifeState == LifeState.Alive) || (LifeState == LifeState.Fainted) && !m_Movement.IsPerformingForcedMovement())
             {
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
@@ -241,7 +245,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         {
             HitPoints = CharacterClass.BaseHP.Value;
 
-            if (!IsNpc)
+            if (!IsNpc || CharacterType == CharacterTypeEnum.Gnome)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
@@ -249,7 +253,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     HitPoints = sessionPlayerData.Value.CurrentHitPoints;
                     if (HitPoints <= 0)
                     {
+                       
                         LifeState = LifeState.Fainted;
+                        
                     }
                 }
             }
@@ -261,7 +267,18 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            //(LifeState == LifeState.Alive) ||(LifeState == LifeState.Fainted) && !m_Movement.IsPerformingForcedMovement()
+            //тут скиллы и навыки можно отключить
+            if ((LifeState == LifeState.Alive) && !m_Movement.IsPerformingForcedMovement())
+            {
+                if (action.CancelMovement)
+                {
+                    m_Movement.CancelMove();
+                }
+
+                m_ServerActionPlayer.PlayAction(ref action);
+            }
+            if ((LifeState == LifeState.Fainted) && !m_Movement.IsPerformingForcedMovement())
             {
                 if (action.CancelMovement)
                 {
@@ -274,7 +291,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
-            if (lifeState != LifeState.Alive)
+            if (lifeState != LifeState.Alive || lifeState != LifeState.Fainted)
             {
                 m_ServerActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
@@ -296,7 +313,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
-        void ReceiveHP(ServerCharacter inflicter, int HP)
+        public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
@@ -334,7 +351,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             //that's handled by a separate function.
             if (HitPoints <= 0)
             {
-                if (IsNpc)
+                if (IsNpc /*&& CharacterType != CharacterTypeEnum.Gnome*/)//если раскоментить импы не будут умирать
                 {
                     if (m_KilledDestroyDelaySeconds >= 0.0f && LifeState != LifeState.Dead)
                     {
@@ -345,7 +362,30 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 }
                 else
                 {
+                    //Debug.Log("ГНОМЫ");
+                    //clientCharacter.CharacterSwap.CharacterModel.head.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                    foreach (var bodyPart in clientCharacter.CharacterSwap.CharacterModel.GetAllBodyParts())
+                    {
+
+                            bodyPart.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+                        
+
+                    }
                     LifeState = LifeState.Fainted;
+                    ServerActionPlayer actionPlayer;
+                    //actionPlayer.PlayAction()
+                    //    if (targetNetObj.TryGetComponent<ServerCharacter>(out var serverCharacter))
+                    //{
+                    //    //Skill1 may be contextually overridden if it was generated from a mouse-click.
+                    //    if (actionID == CharacterClass.Skill1.ActionID && triggerStyle == SkillTriggerStyle.MouseClick)
+                    //    {
+                    //        if (!serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Fainted)
+                    //        {
+                    //            //right-clicked on a downed ally--change the skill play to Revive.
+                    //            actionID = GameDataSource.Instance.ReviveActionPrototype.ActionID;
+                    //        }
+                    //    }
+                    //}
                 }
 
                 m_ServerActionPlayer.ClearActions(false);
